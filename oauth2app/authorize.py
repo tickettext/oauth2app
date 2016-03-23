@@ -5,6 +5,8 @@
 
 
 import simplejson as json
+import re
+
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from urllib import urlencode
 from .consts import ACCESS_TOKEN_EXPIRATION, REFRESHABLE
