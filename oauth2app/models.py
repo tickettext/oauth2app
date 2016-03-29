@@ -8,7 +8,9 @@ import time
 from hashlib import sha512
 from uuid import uuid4
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
+from django.utils.deconstruct import deconstructible
+
 from .consts import CLIENT_KEY_LENGTH, CLIENT_SECRET_LENGTH
 from .consts import SCOPE_LENGTH
 from .consts import ACCESS_TOKEN_LENGTH, REFRESH_TOKEN_LENGTH
@@ -16,6 +18,7 @@ from .consts import ACCESS_TOKEN_EXPIRATION, MAC_KEY_LENGTH, REFRESHABLE
 from .consts import CODE_KEY_LENGTH, CODE_EXPIRATION
 
 
+@deconstructible
 class TimestampGenerator(object):
     """Callable Timestamp Generator that returns a UNIX time integer.
 
@@ -33,6 +36,7 @@ class TimestampGenerator(object):
         return int(time.time()) + self.seconds
 
 
+@deconstructible
 class KeyGenerator(object):
     """Callable Key Generator that returns a random keystring.
 
@@ -71,7 +75,7 @@ class Client(models.Model):
 
     """
     name = models.CharField(max_length=256)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     description = models.TextField(null=True, blank=True)
     key = models.CharField(
         unique=True,
@@ -126,7 +130,7 @@ class AccessToken(models.Model):
 
     """
     client = models.ForeignKey(Client)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     token = models.CharField(
         unique=True,
         max_length=ACCESS_TOKEN_LENGTH,
@@ -174,7 +178,7 @@ class Code(models.Model):
 
     """
     client = models.ForeignKey(Client)
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     key = models.CharField(
         unique=True,
         max_length=CODE_KEY_LENGTH,
