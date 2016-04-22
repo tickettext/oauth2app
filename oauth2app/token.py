@@ -135,23 +135,26 @@ class TokenGenerator(object):
         * *request:* Django HttpRequest object.
 
         """
-        self.grant_type = request.REQUEST.get('grant_type')
-        self.client_id = request.REQUEST.get('client_id')
+        request_params = request.GET.copy()
+        request_params.update(request.POST)
+
+        self.grant_type = request_params.get('grant_type')
+        self.client_id = request_params.get('client_id')
         self.client_secret = request.POST.get('client_secret')
-        self.scope = request.REQUEST.get('scope')
+        self.scope = request_params.get('scope')
         if self.scope is not None:
             self.scope = set(self.scope.split())
         # authorization_code, see 4.1.3.  Access Token Request
-        self.code_key = request.REQUEST.get('code')
-        self.redirect_uri = request.REQUEST.get('redirect_uri')
+        self.code_key = request_params.get('code')
+        self.redirect_uri = request_params.get('redirect_uri')
         # refresh_token, see 6.  Refreshing an Access Token
-        self.refresh_token = request.REQUEST.get('refresh_token')
+        self.refresh_token = request_params.get('refresh_token')
         # password, see 4.3.2. Access Token Request
-        self.email = request.REQUEST.get('email')
-        self.username = request.REQUEST.get('username')
-        self.password = request.REQUEST.get('password')
+        self.email = request_params.get('email')
+        self.username = request_params.get('username')
+        self.password = request_params.get('password')
         # Optional json callback
-        self.callback = request.REQUEST.get('callback')
+        self.callback = request_params.get('callback')
         self.request = request
         try:
             self.validate()

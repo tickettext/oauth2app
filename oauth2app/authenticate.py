@@ -90,7 +90,7 @@ class Authenticator(object):
 
         *Returns None*"""
         self.request = request
-        self.bearer_token = request.REQUEST.get('bearer_token')
+        self.bearer_token = request.GET.get('bearer_token') or request.POST.get('bearer_token')
         if "HTTP_AUTHORIZATION" in self.request.META:
             auth = self.request.META["HTTP_AUTHORIZATION"].split()
             self.auth_type = auth[0].lower()
@@ -286,7 +286,7 @@ class JSONAuthenticator(Authenticator):
         Authenticator.__init__(self, scope=scope)
         
     def validate(self, request):
-        self.callback = request.REQUEST.get('callback')
+        self.callback = request.GET.get('callback') or request.POST.get('callback')
         return Authenticator.validate(self, request)
         
     def response(self, data):

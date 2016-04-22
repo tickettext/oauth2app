@@ -154,13 +154,16 @@ class Authorizer(object):
         * *request:* Django HttpRequest object.
 
         *Returns None*"""
-        self.response_type = request.REQUEST.get('response_type')
-        self.client_id = request.REQUEST.get('client_id')
-        self.redirect_uri = request.REQUEST.get('redirect_uri')
-        self.scope = request.REQUEST.get('scope')
+        request_params = request.GET.copy()
+        request_params.update(request.POST)
+
+        self.response_type = request_params.get('response_type')
+        self.client_id = request_params.get('client_id')
+        self.redirect_uri = request_params.get('redirect_uri')
+        self.scope = request_params.get('scope')
         if self.scope is not None:
             self.scope = set(self.scope.split())
-        self.state = request.REQUEST.get('state')
+        self.state = request_params.get('state')
         self.user = request.user
         self.request = request
         try:
